@@ -64,7 +64,7 @@ public class ExtractMethodExtractor {
         return this;
     }
 
-    public void generateSamples(){
+    public void generateSamples(String outpath){
         RepositoryParser repoParser = new RepositoryParser(this.repository);
         List<Map<String, Object>> samples = new ArrayList<>();
         try {
@@ -77,7 +77,7 @@ public class ExtractMethodExtractor {
             // Write to file
             JSONArray sampleArray = Utils.convertToJsonArray(samples);
 
-            Utils.appendToFile(sampleArray, "samples.jsonl");
+            Utils.appendToFile(sampleArray, outpath);
         }
         catch (Exception e) {
             System.out.println("Exception: " + e);

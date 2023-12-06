@@ -80,10 +80,6 @@ public class RepositoryParser {
         String extractedMethod = this.getMethodBody(srcIndex, "rightSide", refactoring);
         String srcAfterRefactoring = this.getMethodBody(dstIndex, "rightSide", refactoring);
 
-        System.out.println("Smelly Sample: \n"+positiveSample);
-        System.out.println("Extracted Method: \n"+extractedMethod);
-        System.out.println("Method after Refactoring: \n"+srcAfterRefactoring);
-
         samples.put("Smelly Sample", positiveSample);
         samples.put("Extracted Method", extractedMethod);
         samples.put("Method after Refactoring", srcAfterRefactoring);
