@@ -39,4 +39,4 @@ build/
 
 /tmp/*
 
-*/*.json
+*/*.jsonl

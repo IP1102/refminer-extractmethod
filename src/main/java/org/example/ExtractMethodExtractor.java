@@ -9,22 +9,37 @@ import org.refactoringminer.api.*;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 
 public class ExtractMethodExtractor {
 
     private final Repository repository;
     private JSONArray refactoringList;
 
-    public ExtractMethodExtractor(String repositoryPath) throws Exception {
+    private String defaultBranch;
+
+    public ExtractMethodExtractor(String repositoryPath, String defaultBranch) throws Exception {
         GitService gitService = new GitServiceImpl();
 //        "https://github.com/danilofes/refactoring-toy-example.git"
 
-        this.repository = gitService.cloneIfNotExists(
-                "tmp/refactoring-toy-example",
-                repositoryPath);
+        String tempDirectoryPath = System.getProperty("java.io.tmpdir");
+
+        String[] parts = repositoryPath.split("/");
+        String projectName = parts[parts.length - 1].split("\\.")[0];
+
+        System.out.println("Project Name: " + projectName);
+
+        String clonePath = Paths.get(tempDirectoryPath, projectName).toString();
+
+        System.out.println("Clone Path: " + clonePath);
+
+        this.repository = gitService.cloneIfNotExists(clonePath, repositoryPath);
+        this.defaultBranch = defaultBranch;
+
     }
 
     private static List<CodeRange> filterRange(List<CodeRange> codeRanges) {
@@ -42,7 +57,7 @@ public class ExtractMethodExtractor {
         GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
         this.refactoringList = new JSONArray();
 
-        miner.detectAll(this.repository,"master", new RefactoringHandler() {
+        miner.detectAll(this.repository,this.defaultBranch, new RefactoringHandler() {
             @Override
             public void handle(String commitId, List<Refactoring> refactorings) {
                 int c = 0;
@@ -64,7 +79,7 @@ public class ExtractMethodExtractor {
         return this;
     }
 
-    public void generateSamples(String outpath){
+    public void generateSamples(String outPath){
         RepositoryParser repoParser = new RepositoryParser(this.repository);
         List<Map<String, Object>> samples = new ArrayList<>();
         try {
@@ -77,7 +92,7 @@ public class ExtractMethodExtractor {
             // Write to file
             JSONArray sampleArray = Utils.convertToJsonArray(samples);
 
-            Utils.appendToFile(sampleArray, outpath);
+            Utils.appendToFile(sampleArray, outPath);
         }
         catch (Exception e) {
             System.out.println("Exception: " + e);
