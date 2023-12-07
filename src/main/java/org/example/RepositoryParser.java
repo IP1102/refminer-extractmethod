@@ -73,7 +73,7 @@ public class RepositoryParser {
         String positiveSample = this.getMethodBody(0, "leftSide", refactoring);
         int srcIndex = 0;
         int dstIndex = 1;
-        if (!refactoring.getJSONArray("rightSide").getJSONObject(srcIndex).getString("description").equals("source method declaration before extraction")) {
+        if (refactoring.getJSONArray("rightSide").getJSONObject(srcIndex).getString("description").equals("source method declaration before extraction")) {
             srcIndex = 1;
             dstIndex = 0;
         }
