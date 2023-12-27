@@ -1,13 +1,13 @@
 ## Extract refactored code
 
-This CLI tool uses `RefactoringMiner` to identify and extract `extract method` refactorings in a project history.
+This CLI tool uses [RefactoringMiner](https://github.com/tsantalis/RefactoringMiner) to identify and extract `extract method` refactorings in a project history.
 
 ### Dependencies
 
 - Java 11 and above
 - Maven
 
-Currently this tool uses RefactoringMiner 
+Currently this tool uses RefactoringMiner version [3.0.1](https://github.com/tsantalis/RefactoringMiner/releases/tag/3.0.1)
 
 ### Steps to run
 
