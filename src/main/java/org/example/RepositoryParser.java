@@ -40,11 +40,11 @@ public class RepositoryParser {
     }
 
 
-    private String getMethodBody(int index, String key, JSONObject refactoring) throws Exception {
+    private ContentResult getCodeBody(int index, String key, JSONObject refactoring) throws Exception {
 
         ExtractMethodContent emc = new ExtractMethodContent(this.repo.getDirectory().getParent());
-
-        if (Objects.equals(key, "leftSide")) {
+        boolean isLeftSide = Objects.equals(key, "leftSide");
+        if (isLeftSide) {
             emc.checkoutToCommit(this.parentSHA);
         }
         else {
@@ -63,26 +63,33 @@ public class RepositoryParser {
         );
     }
 
-    public Map<String, Object> getSamples(JSONObject refactoring) throws Exception {
+    public Map<String, Object> getSamples(JSONObject refactoring, boolean getContext) throws Exception {
 
         Map<String, Object> samples = new HashMap<>();
 
         commitSHA = refactoring.getString("commitID");
         getParentSHA(commitSHA);
 
-        String positiveSample = this.getMethodBody(0, "leftSide", refactoring);
+        ContentResult positiveSample = this.getCodeBody(0, "leftSide", refactoring);
         int srcIndex = 0;
         int dstIndex = 1;
         if (refactoring.getJSONArray("rightSide").getJSONObject(srcIndex).getString("description").equals("source method declaration before extraction")) {
             srcIndex = 1;
             dstIndex = 0;
         }
-        String extractedMethod = this.getMethodBody(srcIndex, "rightSide", refactoring);
-        String srcAfterRefactoring = this.getMethodBody(dstIndex, "rightSide", refactoring);
+        ContentResult extractedMethod = this.getCodeBody(srcIndex, "rightSide", refactoring);
+        ContentResult srcAfterRefactoring = this.getCodeBody(dstIndex, "rightSide", refactoring);
 
-        samples.put("Smelly Sample", positiveSample);
-        samples.put("Extracted Method", extractedMethod);
-        samples.put("Method after Refactoring", srcAfterRefactoring);
+        if (getContext) {
+            samples.put("Smelly Sample", positiveSample.getClassContent()+"\n"+positiveSample.getMethodContent());
+            samples.put("Extracted Method", positiveSample.getClassContent()+extractedMethod.getMethodContent());
+            samples.put("Method after Refactoring", positiveSample.getClassContent()+srcAfterRefactoring.getMethodContent());
+        }
+        else {
+            samples.put("Smelly Sample", positiveSample.getMethodContent());
+            samples.put("Extracted Method", extractedMethod.getMethodContent());
+            samples.put("Method after Refactoring", srcAfterRefactoring.getMethodContent());
+        }
 
         return samples;
     }

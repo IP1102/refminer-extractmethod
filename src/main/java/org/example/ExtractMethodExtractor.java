@@ -85,7 +85,7 @@ public class ExtractMethodExtractor {
         try {
             for (int i = 0; i < this.refactoringList.length(); i++) {
                 JSONObject refactoring = this.refactoringList.getJSONObject(i);
-                Map<String, Object> instanceSample = repoParser.getSamples(refactoring);
+                Map<String, Object> instanceSample = repoParser.getSamples(refactoring, true);
                 samples.add(instanceSample);
             }
 
